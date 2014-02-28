@@ -43,7 +43,9 @@ end
 local function fall( event )
 	detectCollision()
 
-	wallSpeed = wallSpeed + .001
+	if (wallSpeed < 14) then 
+		wallSpeed = wallSpeed + .001
+	end
 	circle.vy = circle.vy + acceleration
 	circle.y = circle.y + circle.vy
 
