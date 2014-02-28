@@ -37,6 +37,8 @@ local function detectCollision( event )
 
 	if (circle.y >= h - r or circle.y <= r) then
 		print("out of bounds")
+		alive = false
+		storyboard.gotoScene( "retry" )
 	end
 end
 
@@ -93,6 +95,20 @@ end
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
 	local group = self.view
+end
+
+
+-- Called immediately after scene has moved onscreen:
+function scene:enterScene( event )
+	local group = self.view
+	
+	score = 0
+
+	alive = true
+	isFirst = true
+
+	acceleration = .3
+	wallSpeed = 4
 
 	local newHeight = ( dh / 3 ) + math.random( -(dh/8 - 20), (dh/8 - 20) )
 
@@ -108,27 +124,26 @@ function scene:createScene( event )
 	wall:setFillColor(0)
 	topWall:setFillColor(0)	
 
-	circle.vy = 0
-end
-
-
--- Called immediately after scene has moved onscreen:
-function scene:enterScene( event )
-	local group = self.view
-	
 	Runtime:addEventListener( "enterFrame", fall )
 	Runtime:addEventListener( "touch", touched )
 	
 	acceleration = .3
+
+	circle.vy = 0
 end
 
 
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
 	local group = self.view
-	
 
+	Runtime:removeEventListener( "enterFrame", fall )
+	Runtime:removeEventListener( "touch", touched )
 	
+	scoreTxt:removeSelf()
+	circle:removeSelf()
+	wall:removeSelf()
+	topWall:removeSelf()
 end
 
 
@@ -136,6 +151,9 @@ end
 function scene:destroyScene( event )
 	local group = self.view
 	
+	wall = nil
+	topWall = nil
+	circle = nil
 
 end
 
